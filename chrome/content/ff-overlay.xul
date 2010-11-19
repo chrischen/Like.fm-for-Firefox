@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://likefm/skin/overlay.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://likefm/locale/overlay.dtd">
+<overlay id="likefm-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    <script src="lib/crypto.js" />
+    <script src="lib/md5.js" />
+    <script src="lib/jquery-1.4.2.min.js" />
+    <script src="lib/main.js" />
+    <script src="overlay.js" />
+    <script src="globalInject.js" />
+    <script src="ff-overlay.js"/>
+
+  <stringbundleset id="stringbundleset">
+    <stringbundle id="likefm-strings" src="chrome://likefm/locale/overlay.properties"/>
+  </stringbundleset>
+
+
+
+
+</overlay>

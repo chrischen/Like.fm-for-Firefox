@@ -1,0 +1,8 @@
+<!ENTITY likefm.label "Your localized menuitem">
+<!ENTITY likefmContext.label "Your Menuitem">
+<!ENTITY likefmContext.accesskey "Y">
+<!ENTITY likefmToolbarButton.label "Your Toolbar Button">
+<!ENTITY likefmToolbarButton.tooltip "This is your toolbar button!">
+<!ENTITY likefmSidebar.label "Your Sidebar">
+<!ENTITY likefmToolbar.name  "example">
+<!ENTITY likefmToolbar.label "This is an example toolbar. You can hide it under View &gt; toolbars &gt; &likefmToolbar.name;">

@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<prefwindow id="likefm-prefs"
+     title="Like.fm for Firefox Options"
+     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    <prefpane id="lfm-pane" label="Like.fm for Firefox Settings" width="490">
+      <preferences>
+      </preferences>
+
+      <hbox align="center">
+        <label id="likefm-username" control="symbol" value=""/>
+        <button id="unlinkAccountBttn" label="Unlink account"
+        oncommand="likefm.unlinkAccount();"/>
+        <button id="createAccountBttn" label="Create account"
+        oncommand="window.open('https://like.fm/signup')"/>
+        <button id="linkAccountBttn" label="Link existing account"
+        oncommand="likefm.link('close');"/>
+      </hbox>
+    </prefpane>
+    <script src="lib/crypto.js" />
+    <script src="lib/md5.js" />
+    <script src="lib/jquery-1.4.2.min.js" />
+    <script src="lib/main.js" />
+    <script src="overlay.js"/>
+    <script type="text/javascript">
+        likefm.options();
+    </script>
+</prefwindow>
