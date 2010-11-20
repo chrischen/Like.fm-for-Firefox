@@ -3,7 +3,7 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>likefm@like.fm</em:id>
     <em:type>2</em:type>
-    <em:name>Like.fm social music tracker</em:name>
+    <em:name>Like.fm Social Music Tracker</em:name>
     <em:version>1.0.4</em:version>
     <em:creator>Like.fm</em:creator>
     <em:contributor></em:contributor>
