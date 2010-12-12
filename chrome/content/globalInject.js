@@ -1,5 +1,11 @@
 var LikeFMInject;
 likefm.injectScripts = function (win) {
+    var jQuery = LikeFM.jQuery;
+    var $ = function(selector,context){
+       return new  jQuery.fn.init(selector,context||window._content.document);
+    };
+    $.fn = $.prototype = jQuery.fn;
+
     // TODO: Inject JS script hooks if necessary and bind DOM events
     // Catch DOM events for play/stop in extension
     if (win.content.document.getElementById('LikeFMTokenAuthenticated')) {
@@ -80,6 +86,31 @@ likefm.injectScripts = function (win) {
 
         likefm.callback = function(track) {
             track.lsource = 'Pandora';
+            track.source = 'E';
+
+            likefm.sendTrack(track);
+        };
+
+        likefm.injectHooks(win,LikeFMInject,likefm.callback);
+
+    } else if (win.content.document.location.host.indexOf("meemix.com") > -1) {
+
+        LikeFMInject = function() {
+            // Comm link with content script
+            trackEvent = document.createEvent('Event');
+            trackEvent.initEvent('myTrackEvent', true, true);
+
+            MeeMixPlayer.setEventHandler("SongPlaying", function(songData){
+                fireTrackEvent({title:songData.title,artist:songData.artist,type:'touch'});
+            });
+
+            MeeMixPlayer.setEventHandler("SongFinishing", function(songData){
+                fireTrackEvent({title:songData.title,artist:songData.artist,type:'finish'});
+            });
+        }
+
+        likefm.callback = function(track) {
+            track.lsource = 'Meemix.com';
             track.source = 'E';
 
             likefm.sendTrack(track);
@@ -173,7 +204,8 @@ likefm.injectHooks = function (win,hooks,callback) {
 
         var comm = win.content.document.createElement("div");
         comm.setAttribute("id","LikeFMComm");
-
+        comm.style.display = 'none';
+        
         win.document.getElementsByTagName('body')[0].appendChild(comm);
 
         // Comm link with injected script
