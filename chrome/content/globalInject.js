@@ -138,20 +138,28 @@ likefm.injectScripts = function (win) {
             var track = {};
             track.lsource = 'Grooveshark';
             track.source = 'P';
-            if (data.status == "playing") {
+
+            if (data.status == "playing" 
+                && (
+                    (LikeFM.currentTrack
+                        && (data.song.songName != LikeFM.currentTrack.title || data.song.artistName != LikeFM.currentTrack.artist)
+                    ) || !LikeFM.currentTrack
+                )
+            ) {
                track.title = data.song.songName;
                track.artist = data.song.artistName;
                track.album = data.song.albumName;
                track.type = 'touch';
                likefm.sendTrack(track);
 
-            } else if (data.status == "completed") {
+            } else if (data.status == undefined) {
                track.title = data.song.songName;
                track.artist = data.song.artistName;
                track.album = data.song.albumName;
                track.type = 'finish';
 
                likefm.sendTrack(track);
+               LikeFM.currentTrack = null;
             }
         };
 

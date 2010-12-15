@@ -2,7 +2,7 @@
  * Like.fm API Client
  */
 var LikeFM = {
-    version: '1.0.6-firefox',
+    version: '1.0.7-firefox',
     currentTrack: null,
     rawTrack: null,
     finishTimeout: null,
