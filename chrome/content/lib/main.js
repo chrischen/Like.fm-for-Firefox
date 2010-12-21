@@ -2,7 +2,7 @@
  * Like.fm API Client
  */
 var LikeFM = {
-    version: '1.0.7-firefox',
+    version: '1.0.5-firefox',
     currentTrack: null,
     rawTrack: null,
     finishTimeout: null,
@@ -27,8 +27,6 @@ var LikeFM = {
         return Crypto.MD5(string_to_sign);
     },
     handshake: function() {
-        var jQuery = $ = LikeFM.jQuery;
-        
         var ts = Math.round(new Date().getTime() / 1000);
         var args = {
             "hs":"true",
@@ -54,8 +52,6 @@ var LikeFM = {
         },'text');
     },
     sendTouchSignal: function(implicitFinish) {
-        var jQuery = $ = LikeFM.jQuery;
-        
         var that = this;
         setTimeout(function(){
             if (that.currentTrack && likefm.getStringPref('s_session')) {
@@ -123,8 +119,6 @@ var LikeFM = {
         },1000);
     },
     sendFinishSignal: function() {
-        var jQuery = $ = LikeFM.jQuery;
-        
         if (this.currentTrack && likefm.getStringPref('s_session')) {
             var track = this.currentTrack;
 
@@ -187,14 +181,5 @@ var LikeFM = {
         } else {
             this.handshake();
         }
-    },
-    loadjQuery: function (context) {
-        var loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-            .getService(Components.interfaces.mozIJSSubScriptLoader);
-        loader.loadSubScript("chrome://likefm/content/lib/jquery-1.4.2.min.js",context);
-
-        var jQuery = window.jQuery.noConflict(true);
-            if( typeof(jQuery.fn._init) == 'undefined') { jQuery.fn._init = jQuery.fn.init; }
-        this.jQuery = jQuery;
-   }
+    }
 };

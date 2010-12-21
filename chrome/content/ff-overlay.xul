@@ -4,6 +4,7 @@
 <overlay id="likefm-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
     <script src="lib/crypto.js" />
     <script src="lib/md5.js" />
+    <script src="lib/jquery-1.4.2.min.js" />
     <script src="lib/main.js" />
     <script src="overlay.js" />
     <script src="globalInject.js" />

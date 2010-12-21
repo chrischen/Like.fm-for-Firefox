@@ -3,7 +3,6 @@ var likefm = {
     onLoad: function() {
         // initialization code
         this.initialized = true;
-        LikeFM.loadjQuery(LikeFM);
         this.strings = document.getElementById("likefm-strings");
         //var appcontent = document.getElementById("appcontent");   // browser
         //if(appcontent)
@@ -65,8 +64,6 @@ var likefm = {
     likefm.onMenuItemCommand(e);
   },
     sendTrack: function (track) {
-        var jQuery = $ = LikeFM.jQuery;
-
         if (track.title) {
             // Explicit track
             LikeFM.currentTrack = track;
@@ -108,8 +105,6 @@ var likefm = {
         }
     },
     link: function (close) {
-        var jQuery = $ =LikeFM.jQuery;
-
         close = (close == 'close') ? true : false;
         var token;
 
@@ -142,8 +137,6 @@ var likefm = {
         }
     },
     getSession: function (win) {
-        var jQuery = $ = LikeFM.jQuery;
-
         var token;
 
         try {
@@ -160,8 +153,9 @@ var likefm = {
                 'token': token
             };
             args['api_sig'] = LikeFM.calculateSignature(args,'4c5fbddec6eea1aecedaa2ff');
+
             // Get session with token
-            $.get('https://like.fm/api/1.0',args,function(data) {
+            $.get('http://like.fm/api/1.0',args,function(data) {
                 if(data['error']) {
                     likefm.setStringPref("token","");
                 }
