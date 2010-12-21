@@ -136,10 +136,11 @@ likefm.injectScripts = function (win) {
 
         likefm.callback = function(data) {
             var track = {};
+            var percent = data.song.position/data.song.calculatedDuration;
             track.lsource = 'Grooveshark';
             track.source = 'P';
 
-            if (data.status == "playing" 
+            if (data.song.position == 0
                 && (
                     (LikeFM.currentTrack
                         && (data.song.songName != LikeFM.currentTrack.title || data.song.artistName != LikeFM.currentTrack.artist)
@@ -152,7 +153,7 @@ likefm.injectScripts = function (win) {
                track.type = 'touch';
                likefm.sendTrack(track);
 
-            } else if (data.status == undefined) {
+            } else if (data.status == 'playing' && percent > 0.8 && LikeFM.currentTrack) {
                track.title = data.song.songName;
                track.artist = data.song.artistName;
                track.album = data.song.albumName;
