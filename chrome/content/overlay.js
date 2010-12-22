@@ -3,6 +3,7 @@ var likefm = {
     onLoad: function() {
         // initialization code
         this.initialized = true;
+        LikeFM.loadjQuery(LikeFM);
         this.strings = document.getElementById("likefm-strings");
         //var appcontent = document.getElementById("appcontent");   // browser
         //if(appcontent)
@@ -22,24 +23,24 @@ var likefm = {
               }
         }, true);
     },
-   onPageLoad: function(aEvent) {
+    onPageLoad: function(aEvent) {
      var doc = aEvent.originalTarget; // doc is document that triggered "onload" event
 
      // add event listener for page unload
      aEvent.originalTarget.defaultView.addEventListener("unload", function(){likefm.onPageUnload();}, true);
-   },
+    },
 
-   onPageUnload: function(aEvent) {
+    onPageUnload: function(aEvent) {
      // do something
-   },
-   setStringPref: function(key,value) {
+    },
+    setStringPref: function(key,value) {
      // Get the "extensions.likefm." branch
     var prefs = Components.classes["@mozilla.org/preferences-service;1"]
                         .getService(Components.interfaces.nsIPrefService);
     prefs = prefs.getBranch("extensions.likefm.");
     prefs.setCharPref(key,value);
-   },
-   getStringPref: function(key) {
+    },
+    getStringPref: function(key) {
        // Get the "extensions.likefm." branch
         var pref;
         var prefs = Components.classes["@mozilla.org/preferences-service;1"]
@@ -52,18 +53,20 @@ var likefm = {
         }
         return pref;
 
-   },
-  onMenuItemCommand: function(e) {
-    //var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
-    //                              .getService(Components.interfaces.nsIPromptService);
-    //promptService.alert(window, this.strings.getString("helloMessageTitle"),
-    //                            this.strings.getString("helloMessage"));
-  },
-  onToolbarButtonCommand: function(e) {
-    // just reuse the function above.  you can change this, obviously!
-    likefm.onMenuItemCommand(e);
-  },
+    },
+    onMenuItemCommand: function(e) {
+        //var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+        //                              .getService(Components.interfaces.nsIPromptService);
+        //promptService.alert(window, this.strings.getString("helloMessageTitle"),
+        //                            this.strings.getString("helloMessage"));
+    },
+    onToolbarButtonCommand: function(e) {
+        // just reuse the function above.  you can change this, obviously!
+        likefm.onMenuItemCommand(e);
+    },
     sendTrack: function (track) {
+        var jQuery = $ = LikeFM.jQuery;
+        
         if (track.title) {
             // Explicit track
             LikeFM.currentTrack = track;
@@ -105,6 +108,8 @@ var likefm = {
         }
     },
     link: function (close) {
+        var jQuery = $ = LikeFM.jQuery;
+        
         close = (close == 'close') ? true : false;
         var token;
 
@@ -127,7 +132,7 @@ var likefm = {
                 window.close();
             }
         } else {
-            $.get('http://like.fm/api/1.0',args,function(data,code) {
+            $.get('https://like.fm/api/1.0',args,function(data,code) {
                 likefm.setStringPref('token',data['token']);
                 var appLinkTab = window.open('https://like.fm/api/auth/?api_key=' + args['api_key'] + '&token=' + data['token']);
                 if (close) {
@@ -137,6 +142,8 @@ var likefm = {
         }
     },
     getSession: function (win) {
+        var jQuery = $ = LikeFM.jQuery;
+        
         var token;
 
         try {
@@ -155,7 +162,7 @@ var likefm = {
             args['api_sig'] = LikeFM.calculateSignature(args,'4c5fbddec6eea1aecedaa2ff');
 
             // Get session with token
-            $.get('http://like.fm/api/1.0',args,function(data) {
+            $.get('https://like.fm/api/1.0',args,function(data) {
                 if(data['error']) {
                     likefm.setStringPref("token","");
                 }

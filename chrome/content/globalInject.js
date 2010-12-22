@@ -1,6 +1,11 @@
 var LikeFMInject;
 likefm.injectScripts = function (win) {
-    // TODO: Inject JS script hooks if necessary and bind DOM events
+    var jQuery = LikeFM.jQuery;
+    var $ = function(selector,context) {
+        return new jQuery.fn.init(selector,context||window._content.document);
+    };
+    $.fn = $.prototype = jQuery.fn;
+    
     // Catch DOM events for play/stop in extension
     if (win.content.document.getElementById('LikeFMTokenAuthenticated')) {
         // Request session
@@ -113,14 +118,33 @@ likefm.injectScripts = function (win) {
         likefm.injectHooks(win,LikeFMInject,likefm.callback);
 
     } else if (win.content.document.location.host.indexOf("grooveshark.com") > -1) {
-         LikeFMInject = function() {
+        function fireTrackEvent (data) {
+            // Context of the page
+            var hiddenDiv = document.getElementById('LikeFMComm');
+            hiddenDiv.textContent = JSON.stringify(data);
+            hiddenDiv.dispatchEvent(trackEvent);
+
+            if (data.status == 'playing' && !data.statusUpdate) {
+                // Song has started playing - start polling
+                LikeFM.statusInterval = setInterval(function() {
+                    var status = Grooveshark.getCurrentSongStatus();
+                    status.statusUpdate = true;
+                    fireTrackEvent(status);
+                },500);
+            } else if (data.status == 'completed') {
+                clearInterval(LikeFM.statusInterval);
+                LikeFM.statusInterval = null;
+            }
+        }
+
+        LikeFMInject = function() {
             // Comm link with content script
             trackEvent = document.createEvent('Event');
             trackEvent.initEvent('myTrackEvent', true, true);
 
             function bind() {
                 try {
-                window.Grooveshark.setSongStatusCallback("fireTrackEvent");
+                    window.Grooveshark.setSongStatusCallback("fireTrackEvent");
                 } catch (e) {
                     setTimeout(bind,1200);
                 }
@@ -134,13 +158,7 @@ likefm.injectScripts = function (win) {
             track.lsource = 'Grooveshark';
             track.source = 'P';
 
-            if (data.song.position == 0
-                && (
-                    (LikeFM.currentTrack
-                        && (data.song.songName != LikeFM.currentTrack.title || data.song.artistName != LikeFM.currentTrack.artist)
-                    ) || !LikeFM.currentTrack
-                )
-            ) {
+            if (data.status == 'playing' && !data.statusUpdate) {
                track.title = data.song.songName;
                track.artist = data.song.artistName;
                track.album = data.song.albumName;
@@ -154,10 +172,11 @@ likefm.injectScripts = function (win) {
                track.type = 'finish';
 
                likefm.sendTrack(track);
+               LikeFM.currentTrack = null;
             }
         };
-
-        likefm.injectHooks(win,LikeFMInject,likefm.callback);
+        
+        likefm.injectHooks(win,LikeFMInject,likefm.callback,fireTrackEvent);
 
     } else if (win.content.document.location.host.indexOf("earbits.com") > -1) {
 	
@@ -215,11 +234,16 @@ likefm.displayLinkNotice = function (win) {
     }
 };
 
-likefm.injectHooks = function (win,hooks,callback) {
-    function fireTrackEvent(data) {
-        var hiddenDiv = document.getElementById('LikeFMComm');
-        hiddenDiv.textContent = JSON.stringify(data);
-        hiddenDiv.dispatchEvent(trackEvent);
+likefm.injectHooks = function (win,hooks,callback,trackEventCallback) {
+    var trackEvent;
+    if ( trackEventCallback ) {
+        fireTrackEvent = trackEventCallback;
+    } else {
+        function fireTrackEvent (data) {
+            var hiddenDiv = document.getElementById('LikeFMComm');
+            hiddenDiv.textContent = JSON.stringify(data);
+            hiddenDiv.dispatchEvent(trackEvent);
+        }
     }
 
     // Below is in the context of content script
@@ -228,7 +252,7 @@ likefm.injectHooks = function (win,hooks,callback) {
     if (!win.content.document.getElementById("LikeFMInject")) {
         var script = win.document.createElement('script');
         script.setAttribute('id','LikeFMInject');
-        script.appendChild(win.document.createTextNode('var trackEvent;' + fireTrackEvent + '('+ hooks +')();'));
+        script.appendChild(win.document.createTextNode('var LikeFM = {}; var trackEvent;' + fireTrackEvent + '('+ hooks +')();'));
         win.document.documentElement.getElementsByTagName("HEAD")[0].appendChild(script);
     }
 
