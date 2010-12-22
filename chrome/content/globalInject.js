@@ -130,16 +130,24 @@ likefm.injectScripts = function (win) {
 
         likefm.callback = function(data) {
             var track = {};
+            var percent = data.song.position/data.song.calculatedDuration;
             track.lsource = 'Grooveshark';
             track.source = 'P';
-            if (data.status == "playing") {
+
+            if (data.song.position == 0
+                && (
+                    (LikeFM.currentTrack
+                        && (data.song.songName != LikeFM.currentTrack.title || data.song.artistName != LikeFM.currentTrack.artist)
+                    ) || !LikeFM.currentTrack
+                )
+            ) {
                track.title = data.song.songName;
                track.artist = data.song.artistName;
                track.album = data.song.albumName;
                track.type = 'touch';
                likefm.sendTrack(track);
 
-            } else if (data.status == "completed") {
+            } else if (data.status == 'playing' && percent > 0.8 && LikeFM.currentTrack) {
                track.title = data.song.songName;
                track.artist = data.song.artistName;
                track.album = data.song.albumName;
@@ -152,24 +160,25 @@ likefm.injectScripts = function (win) {
         likefm.injectHooks(win,LikeFMInject,likefm.callback);
 
     } else if (win.content.document.location.host.indexOf("earbits.com") > -1) {
-		LikeFMInject = function() {
+	
+        LikeFMInject = function() {
             // Comm link with content script
             trackEvent = document.createEvent('Event');
             trackEvent.initEvent('myTrackEvent', true, true);			
 
-			$(document).ready(function(){
+	    $(document).ready(function(){
 				
-				var player = $("#player-container");
+	      var player = $("#player-container");
 
-	            player.bind("onTrackChanged", function(event, artist, title){
-	                fireTrackEvent({title:title,artist:artist,type:'touch'});
-	            });
+	      player.bind("onTrackChanged", function(event, artist, title){
+	        fireTrackEvent({title:title,artist:artist,type:'touch'});
+	      });
 
-	            player.bind("onTrackCompleted", function(event, artist, title){
-	                fireTrackEvent({title:title,artist:artist,type:'finish'});
-	            });
+	      player.bind("onTrackCompleted", function(event, artist, title){
+	        fireTrackEvent({title:title,artist:artist,type:'finish'});
+	      });
 				
-			});
+            });
         }
 
         likefm.callback = function(track) {
@@ -180,7 +189,6 @@ likefm.injectScripts = function (win) {
         };
 
         likefm.injectHooks(win,LikeFMInject,likefm.callback);
-		
 		
     }
 };
