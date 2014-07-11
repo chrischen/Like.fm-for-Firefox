@@ -186,15 +186,14 @@ likefm.injectScripts = function (win) {
             trackEvent.initEvent('myTrackEvent', true, true);			
 
 	    $(document).ready(function(){
-				
-	      var player = $("#player-container");
 
-	      player.bind("onTrackChanged", function(event, artist, title){
-	        fireTrackEvent({title:title,artist:artist,type:'touch'});
+	      EbApp.bindEvent("track-started", function(event, track){
+	        fireTrackEvent({title:track.get("name"),artist:track.get("artist_name"),type:'touch'});
 	      });
 
-	      player.bind("onTrackCompleted", function(event, artist, title){
-	        fireTrackEvent({title:title,artist:artist,type:'finish'});
+        // can use event "track-completed" if you want to only log when the track is fully listened to (i.e. when the player advances to the next track automatically)
+	      EbApp.bindEvent("track-listened", function(event, track){
+	        fireTrackEvent({title:track.get("name"),artist:track.get("artist_name"),type:'finish'});
 	      });
 				
             });
